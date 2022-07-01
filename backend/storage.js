@@ -93,7 +93,7 @@ let Storage = {
     },
 
     getAll: function (lastId = 0, limit = 20 , isExpired = 1) {
-        const operator = isExpired ? '<=' : '>' ;
+        const operator = +isExpired ? '<=' : '>' ;
         const now = getTimestampAfterNDays(0);
         //sql
         const sql = `SELECT * FROM ${TABLE_NAME} where id > $1 AND expire_on ${operator} $2 LIMIT $3`;
