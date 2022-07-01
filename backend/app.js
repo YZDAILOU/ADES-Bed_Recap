@@ -100,6 +100,25 @@ app.delete('/storage', (req, res, next) => {
         .catch(next);
 })
 
+//api to get all from storage
+app.get('/storage/all' , (req,res,next) => {
+    //isExpired can only be 1 or 0 , 0-->Not expired , 1-->expired
+    const {lastId, pageSize , isExpired} = req.query;
+    return getAll(lastId, pageSize , isExpired)
+    .then((result) => res.json(result))
+    .catch(next);
+
+})
+
+
+//update 
+app.put('/storage' , (req,res,next) => {
+    const {key , expiryDate} = req.query;
+    return update(key, expiryDate)
+    .then(() => res.sendStatus(200))
+    .catch(next);
+
+})
 
 
 //========================================================

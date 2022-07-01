@@ -54,7 +54,7 @@ let Storage = {
                 if (error.code === POSTGRES_ERROR_CODE.UNIQUE_CONSTRAINT) {
                     throw createHttpError(400, `Key ${key} already exists`);
                 }
-                 else throw error.code; // unexpected error
+                else throw error.code; // unexpected error
             });
     },
 
@@ -83,12 +83,37 @@ let Storage = {
         //             |      array of data to be passed to use in the condition of retrieving data
         //             |        |         
         return query(sql, [currentTimeStamp])
-        .then((result) => {
-            console.log("result: " + result.rowCount);
-            return (result.rowCount);
-        })
-        .catch((error)=>{
-            console.log("error: " + error);
+            .then((result) => {
+                console.log("result: " + result.rowCount);
+                return (result.rowCount);
+            })
+            .catch((error) => {
+                console.log("error: " + error);
+            });
+    },
+
+    getAll: function (lastId = 0, limit = 20 , isExpired = 1) {
+        const operator = isExpired ? '<=' : '>' ;
+        const now = getTimestampAfterNDays(0);
+        //sql
+        const sql = `SELECT * FROM ${TABLE_NAME} where id > $1 AND expire_on ${operator} $2 LIMIT $3`;
+        //execute query
+        return query(sql, [lastId,now, limit]).then((result) => {
+            console.log("Get successfully....");
+            return result.rows;
+        });
+    },
+
+
+
+    update: function (key , expiryDate) {
+        //sql
+        const sql = `UPDATE ${TABLE_NAME} SET expire_on = $1 WHERE key = $2`
+        //execute query
+        return query(sql, [expiryDate,key]).then((result) => {
+            console.log("Get successfully....");
+            if (!result.rowCount) throw createHttpError(400, `key ${key} not found!`);//if no rowCOunt means nothing is updated
+
         });
     },
 
