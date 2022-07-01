@@ -15,12 +15,12 @@ export default function KeyValueRow(props) {
         React.createElement(
             "td",
             null,
-            props.value
+            props.data
         ),
         React.createElement(
             "td",
             null,
-            props.expire_on
+            new Date(props.expire_on).toLocaleString()
         ),
         React.createElement(
             "td",

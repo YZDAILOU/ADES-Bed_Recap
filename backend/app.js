@@ -6,7 +6,7 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const createHttpError = require('http-errors');
-const { addRecord, getRecord, deleteRecord } = require('./storage');//get and add are the two functions imported from storage.js and can be used by just calling them 
+const { addRecord, getRecord, deleteRecord , getAll, update} = require('./storage');//get and add are the two functions imported from storage.js and can be used by just calling them 
 
 app.use(cors())
 app.use(express.json())

@@ -1,14 +1,32 @@
+import {getAll} from '../api.js';
 import KeyValTable from "./keyValTable.js";
 
-function ManageKeyVal(props){
+const {useQuery , QueryClient , QueryClientProvider} = window.ReactQuery;
+
+function ManageKeyVal(props) {
+    //setting to configure to enable the react query to work
+    const { data, isLoading, error, } = useQuery('getAll', ()=>getAll(), { refetchOnWindowFocus: false });
     return <div>
         <h1>ManageKeyVal</h1>
-        <KeyValTable rows={[{id:1,dataKey:1,value:1,expire_on:1},{id:2,dataKey:2,value:2,expire_on:2},{id:3,dataKey:3,value:3,expire_on:3}]}></KeyValTable>
+        {/* check if is loading */}
+        {/* |------check if the query is still on going , is loading anot  */}
+        {/* |            |--if yes still loading , display loading  */}
+        {/* |            |--else if error occur , display the error                                               */}
+        {/* |            |                                                      |--else no loading done , displauy the table with the data obtain from the query */}
+        {isLoading ? <p>Loading....</p> : error ? <p>{error.message}</p>:<KeyValTable rows={data}></KeyValTable>}
+
     </div>
 }
 
+const queryClient = new QueryClient();
+
+function ManageKeyValApp(props){
+   return (<QueryClientProvider client={queryClient}>
+        <ManageKeyVal/>
+    </QueryClientProvider>
+);}
 
 window.addEventListener('DOMContentLoaded', function () {
-const root = ReactDOM.createRoot(document.querySelector('#root'));
-root.render(<ManageKeyVal/>);
+    const root = ReactDOM.createRoot(document.querySelector('#root'));
+    root.render(<ManageKeyValApp/>);
 })

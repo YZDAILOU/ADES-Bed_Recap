@@ -13,7 +13,7 @@ return <table border={1}>
         </tr>
     </thead>
     <tbody>
-        {props.rows.map(({id,dataKey,value,expire_on})=><KeyValueRow id={id} dataKey={dataKey} value={value} expire_on={expire_on}/>)}
+        {props.rows.map(({id,key,data,expire_on})=><KeyValueRow id={id} dataKey={key} data={data} expire_on={expire_on}/>)}
     </tbody>
 </table>
 }

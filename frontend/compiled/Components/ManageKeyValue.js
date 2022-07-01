@@ -1,6 +1,21 @@
+import { getAll } from '../api.js';
 import KeyValTable from "./keyValTable.js";
 
+var _window$ReactQuery = window.ReactQuery,
+    useQuery = _window$ReactQuery.useQuery,
+    QueryClient = _window$ReactQuery.QueryClient,
+    QueryClientProvider = _window$ReactQuery.QueryClientProvider;
+
+
 function ManageKeyVal(props) {
+    //setting to configure to enable the react query to work
+    var _useQuery = useQuery('getAll', function () {
+        return getAll();
+    }, { refetchOnWindowFocus: false }),
+        data = _useQuery.data,
+        isLoading = _useQuery.isLoading,
+        error = _useQuery.error;
+
     return React.createElement(
         'div',
         null,
@@ -9,11 +24,29 @@ function ManageKeyVal(props) {
             null,
             'ManageKeyVal'
         ),
-        React.createElement(KeyValTable, { rows: [{ id: 1, dataKey: 1, value: 1, expire_on: 1 }, { id: 2, dataKey: 2, value: 2, expire_on: 2 }, { id: 3, dataKey: 3, value: 3, expire_on: 3 }] })
+        isLoading ? React.createElement(
+            'p',
+            null,
+            'Loading....'
+        ) : error ? React.createElement(
+            'p',
+            null,
+            error.message
+        ) : React.createElement(KeyValTable, { rows: data })
+    );
+}
+
+var queryClient = new QueryClient();
+
+function ManageKeyValApp(props) {
+    return React.createElement(
+        QueryClientProvider,
+        { client: queryClient },
+        React.createElement(ManageKeyVal, null)
     );
 }
 
 window.addEventListener('DOMContentLoaded', function () {
     var root = ReactDOM.createRoot(document.querySelector('#root'));
-    root.render(React.createElement(ManageKeyVal, null));
+    root.render(React.createElement(ManageKeyValApp, null));
 });
