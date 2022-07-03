@@ -13,6 +13,7 @@ return <table border={1}>
         </tr>
     </thead>
     <tbody>
+        {/* retrieve the rows obtain from query , use .map function to split the array to individual object */}
         {props.rows.map(({id,key,data,expire_on})=><KeyValueRow id={id} dataKey={key} data={data} expire_on={expire_on}/>)}
     </tbody>
 </table>
