@@ -96,7 +96,7 @@ let Storage = {
         const operator = +isExpired ? '<=' : '>' ;
         const now = getTimestampAfterNDays(0);
         //sql
-        const sql = `SELECT * FROM ${TABLE_NAME} where id > $1 AND expire_on ${operator} $2 LIMIT $3`;
+        const sql = `SELECT * FROM ${TABLE_NAME} where id > $1 AND expire_on ${operator} $2 ORDER BY id LIMIT $3 `;
         //execute query
         return query(sql, [lastId,now, limit]).then((result) => {
             console.log("Get successfully....");

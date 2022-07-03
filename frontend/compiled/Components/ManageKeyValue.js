@@ -9,6 +9,9 @@ var _window$ReactQuery = window.ReactQuery,
     QueryClient = _window$ReactQuery.QueryClient,
     QueryClientProvider = _window$ReactQuery.QueryClientProvider;
 
+// create a queryClient
+
+var queryClient = new QueryClient({ defaultOptions: { queries: { refetchOnWindowFocus: false } } });
 
 function ManageKeyVal(props) {
     var _React$useState = React.useState({}),
@@ -16,15 +19,17 @@ function ManageKeyVal(props) {
         filter = _React$useState2[0],
         setFilter = _React$useState2[1];
     //this is the line that will be calling the function from backend
+    //fetch is for GET request only , update , delete and add is under mutate
 
 
     var _useQuery = useQuery(['getAll', filter.lastId, filter.isExpired], function () {
         return getAll(filter.lastId, 5, filter.isExpired);
-    }, { refetchOnWindowFocus: false }),
+    }),
         data = _useQuery.data,
         isLoading = _useQuery.isLoading,
         error = _useQuery.error,
-        isRefetching = _useQuery.isRefetching;
+        isRefetching = _useQuery.isRefetching,
+        refetch = _useQuery.refetch;
     //                                                        ——————————————————————————————
     //                                                                       |
     //use effect-->when lastId or isExpired is updated , i will refetch      |this array with the varaible works same as the useEffect to refetch , hence we can just replace useEffect with dat
@@ -32,9 +37,14 @@ function ManageKeyVal(props) {
     //     refetch();            |———————————————————————————————————————————|
     // }, [lastId, isExpired]);  |
 
+    // this is a callback to refetch 
+
+
+    var onExpireRow = React.useCallback(function () {
+        refetch();
+    }, [refetch]);
+
     // this will return the table and the next button and check box 
-
-
     return React.createElement(
         'div',
         null,
@@ -52,12 +62,9 @@ function ManageKeyVal(props) {
             'p',
             null,
             error.message
-        ) : React.createElement(KeyValTable, { rows: data })
+        ) : React.createElement(KeyValTable, { onExpireRow: onExpireRow, rows: data })
     );
 }
-
-// create a queryClient
-var queryClient = new QueryClient();
 
 // create a ManageKeyValApp to be displayed
 function ManageKeyValApp(props) {

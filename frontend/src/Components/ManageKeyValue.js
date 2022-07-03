@@ -4,17 +4,26 @@ import KeyValTable from "./keyValTable.js";
 
 const { useQuery, QueryClient, QueryClientProvider } = window.ReactQuery;
 
+// create a queryClient
+const queryClient = new QueryClient({defaultOptions:{ queries : {refetchOnWindowFocus: false} }});
+
 function ManageKeyVal(props) {
 
     const [filter, setFilter] = React.useState({});
     //this is the line that will be calling the function from backend
-    const { data, isLoading, error, isRefetching } = useQuery(['getAll', filter.lastId, filter.isExpired], () => getAll(filter.lastId, 5, filter.isExpired), { refetchOnWindowFocus: false });
+    //fetch is for GET request only , update , delete and add is under mutate
+    const { data, isLoading, error, isRefetching,refetch } = useQuery(['getAll', filter.lastId, filter.isExpired], () => getAll(filter.lastId, 5, filter.isExpired));
     //                                                        ——————————————————————————————
     //                                                                       |
     //use effect-->when lastId or isExpired is updated , i will refetch      |this array with the varaible works same as the useEffect to refetch , hence we can just replace useEffect with dat
     // React.useEffect(() => {   |                                           |
     //     refetch();            |———————————————————————————————————————————|
     // }, [lastId, isExpired]);  |
+
+    // this is a callback to refetch 
+    const onExpireRow = React.useCallback(()=>{
+        refetch();
+    },[refetch]);
 
     // this will return the table and the next button and check box 
     return (<div>
@@ -25,13 +34,12 @@ function ManageKeyVal(props) {
         {/*         |                        |--if yes still loading , display loading  */}
         {/*         |                        |                       |--else if error occur , display the error                                               */}
         {/*         |                        |                       |                                 |--else no loading done , displauy the table with the data obtain from the query */}
-        {isLoading || isRefetching ? (<p>Loading....</p>) : error ? (<p>{error.message}</p>) : (<KeyValTable rows={data}></KeyValTable>)}
+        {isLoading || isRefetching ? (<p>Loading....</p>) : error ? (<p>{error.message}</p>) : (<KeyValTable onExpireRow={onExpireRow} rows={data}></KeyValTable>)}
 
     </div>)
 }
 
-// create a queryClient
-const queryClient = new QueryClient();
+
 
 // create a ManageKeyValApp to be displayed
 function ManageKeyValApp(props) {
